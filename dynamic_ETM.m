@@ -16,7 +16,7 @@ m1=0.15;
 max_delta1=1.5;%max_phi=max_delta*m1
 min_delta1=0.5;%min_phi=min_delta*m1
 topm1=0.271;%topm1>=max_phi
-vare=1/10;Count_1=0;r1=1;
+vare=1/5;Count_1=0;r1=1;
 
 while n<=(tm/h)+1;
     if n==1
