@@ -1,7 +1,5 @@
-
 tm=40;h=0.001;t=0:h:tm;
 n=1;  
-Design_K_P;
 G=[0 0 1.0;
    0 -1.0 0;
    -1.0 0 0];
@@ -12,32 +10,35 @@ rank(OBSER);
 List=[2,2,2,1,4,3,3,1,3,4,4,1,3,1,1,2,2,3,3,1,1,4,4,2,2,3,1,4,4,2,2,2,2,1,1,2,3,3,1,1,1,2,2,2,1,4,3,3,1,3,4,4,1,3,1,1,2,2,3,3,1,1,4,4,2,2,3,1,4,4,2,2,2,2,1,1,2,3,3,1,1,1,2,2,2,1,4,3,3,1,3,4,4,1,3,1,1,2,2,3,3,1,1,4,4,2,2,3,1,4,4,2,2,2,2,1,1,2,3,3,1,1,1];
 k=2;
 % threshold parameter
-m1=0.15;
-max_delta1=1.5;%max_phi=max_delta*m1
-min_delta1=0.5;%min_phi=min_delta*m1
+max_phi1=0.225;
+min_phi1=0.075;
 topm1=0.271;%topm1>=max_phi
-vare=1/5;Count_1=0;r1=1;
-
+%other parameter
+vare=1/5;
+Count_1=0;%the flag of triggering times
+r1=1;
+Gamma=1;
+a=10;
+b=1;
 while n<=(tm/h)+1;
     if n==1
        %% Initialization
         x1(1,:)=[-4,3.5,3.0];
-        D_es1(1)=0.0;D_es2(1)=0.0;D_es3(1)=0.0;
-        d1_es(1)=0;
+        D_es1(1)=0.0;D_es2(1)=0.0;D_es3(1)=0.0;%The estimate of D
+        d1_es(1)=0;%The estimate of disturbance
         rho_es(1,:)=[0.0 0.0 0.0];
         vd(1,:)=[0.0 0.0 0.0];
         u1(1)=0;
         d1(1)=0;
-        intervals1(1)=1;
+        intervals1(1)=0;
         z(1,:)=[0.35 0.35 0.35];
         w1(1)=0;
-        delta1(1)=1.0;
-        A=A2;B=B2;C1=C12;C2=C22;P=P2;K=K2;L_o=L_o2;Bw=Bw2;F=F2;
-        
+        phi1(1)=1.0;
+        A=A2;B=B2;C1=C12;C2=C22;P=P2;K=K2;L_o=L_o2;Bw=Bw2;F=F2;       
     else
         t1=h*(n-1);
         t2=h*n;
-        r(n)=exp(-0.1*t1);
+        sigma(n)=0.01*exp(-5*t1);
      %% Mode
         if mod(n,1000)==0
             flag=List(k);
@@ -56,9 +57,9 @@ while n<=(tm/h)+1;
      %%  ADOB 
         vd(n,:)=h*(M*rho_es(n-1,:)'+L_o*(A1*x1(n-1,:)'+B*w1(n-1)))'+vd(n-1,:);
         rho_es(n,:)=vd(n-1,:)-(L_o*x1(n-1,:)')';
-        D_es1(n)=h*(-0*D_es1(n-1)+2*0.5*B'*P*x1(n-1,:)'*rho_es(n-1,1))+D_es1(n-1);
-        D_es2(n)=h*(-0*D_es2(n-1)+2*0.5*B'*P*x1(n-1,:)'*rho_es(n-1,2))+D_es2(n-1);
-        D_es3(n)=h*(-0*D_es3(n-1)+2*0.5*B'*P*x1(n-1,:)'*rho_es(n-1,3))+D_es3(n-1);
+        D_es1(n)=h*(-Gamma*sigma(n)*D_es1(n-1)+Gamma*B'*P*x1(n-1,:)'*rho_es(n-1,1))+D_es1(n-1);
+        D_es2(n)=h*(-Gamma*sigma(n)*D_es2(n-1)+Gamma*B'*P*x1(n-1,:)'*rho_es(n-1,2))+D_es2(n-1);
+        D_es3(n)=h*(-Gamma*sigma(n)*D_es3(n-1)+Gamma*B'*P*x1(n-1,:)'*rho_es(n-1,3))+D_es3(n-1);
         D_es(n-1,:)=[D_es1(n-1)  D_es2(n-1) D_es3(n-1)];
         d1_es(n)=D_es(n-1,:)*rho_es(n-1,:)';
      %% Disturance
@@ -70,14 +71,14 @@ while n<=(tm/h)+1;
         w1(n)=K*x1(n-1,:)'-d1_es(n);
      %% ET   
         e1=w1(n)-u1(n-1);
-        delta1(n)=max_delta1-(max_delta1-min_delta1)*tanh((10*e1*e1)/(u1(n-1)*u1(n-1)));
-        if delta1(n)>=max_delta1
-            delta1(n)=max_delta1;
+        phi1(n)=max_phi1-(max_phi1-min_phi1)*tanh((a*e1*e1)/b*(u1(n-1)*u1(n-1)));
+        if phi1(n)>=max_phi1
+            phi1(n)=max_phi1;
         end
-        if delta1(n)<=min_delta1
-            delta1(n)=min_delta1;
+        if phi1(n)<=min_phi1
+            phi1(n)=min_phi1;
         end
-       if norm(e1,inf)>=delta1(n)*m1
+       if norm(e1,inf)>=phi1(n)
         u1(n)=w1(n);
         Count_1=Count_1+1;
         Lount_1(n)=1;
