@@ -1,5 +1,5 @@
-% clc;
-% clear all;
+%clc;
+%clear all;
 
 phi_1=-5;phi_2=-6;phi_3=-7;phi_4=-8;
 
@@ -355,6 +355,15 @@ lmiterm([-29 1 1 Pq4],1,1);
 % lmiterm([2 1 1 0],1*eye(2));
 % lmiterm([4 1 1 P2],1,1);
 % lmiterm([-4 1 1 0],2*eye(2));
+
+% lmiterm([31 1 1 U1],1,1);
+% lmiterm([31 1 1 0],100);
+% lmiterm([32 1 1 U2],1,1);
+% lmiterm([32 1 1 0],100);
+% lmiterm([33 1 1 U3],1,1);
+% lmiterm([33 1 1 0],100);
+% lmiterm([34 1 1 U4],1,1);
+% lmiterm([34 1 1 0],100);
 
 lmisys=getlmis;
 options=[0,0,0,0,0];
