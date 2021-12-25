@@ -33,7 +33,7 @@ while n<=(tm/h)+1;
         intervals1(1)=0;
         z(1,:)=[0.35 0.35 0.35];
         w1(1)=0;
-        phi1(1)=1.0;
+        phi1(1)=0.075;
         A=A2;B=B2;C1=C12;C2=C22;P=P2;K=K2;L_o=L_o2;Bw=Bw2;F=F2;       
     else
         t1=h*(n-1);
